@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { X, Lock, User, ShieldCheck, Check, AlertCircle } from 'lucide-react';
+import { X, Lock, User, ShieldCheck, Check, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { DEFAULT_ACCOUNTS } from '../data/credentials';
 
 export default function LoginModal({ isOpen, onClose, onLogin, currentUser }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
 
   if (!isOpen) return null;
@@ -25,13 +26,8 @@ export default function LoginModal({ isOpen, onClose, onLogin, currentUser }) {
       setPassword('');
       onClose();
     } else {
-      setError('Invalid collegiate ID or password. Check credentials below.');
+      setError('Invalid colleague username or passcode. Please check your credentials.');
     }
-  };
-
-  const handleQuickLogin = (account) => {
-    onLogin(account);
-    onClose();
   };
 
   return (
@@ -51,93 +47,75 @@ export default function LoginModal({ isOpen, onClose, onLogin, currentUser }) {
           </h3>
         </div>
         <p className="text-xs text-parchment-600 dark:text-parchment-400 mb-5 leading-relaxed">
-          Sign in to raise treat claims or administer the collegiate rotational ledger.
+          Sign in to submit your treat claim ticket or manage the collegiate rotational ledger.
         </p>
 
         {error && (
-          <div className="mb-4 p-3 rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/40 text-red-700 dark:text-red-300 text-xs flex items-center gap-2">
+          <div className="mb-4 p-3 rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/40 text-red-700 dark:text-red-300 text-xs flex items-center gap-2 animate-in fade-in duration-150">
             <AlertCircle className="w-4 h-4 flex-shrink-0" />
             <span>{error}</span>
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-3.5">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-[11px] font-mono uppercase tracking-wider text-parchment-700 dark:text-parchment-300 mb-1">
+            <label className="block text-[11px] font-mono uppercase tracking-wider text-parchment-700 dark:text-parchment-300 mb-1.5">
               Colleague Username
             </label>
             <div className="relative">
-              <User className="w-4 h-4 text-parchment-400 absolute left-3 top-3" />
+              <User className="w-4 h-4 text-parchment-400 absolute left-3.5 top-3.5" />
               <input
                 type="text"
-                placeholder="e.g. elesh or bhawesh"
+                placeholder="e.g. elesh, bhawesh, vyom..."
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full pl-9 pr-3.5 py-2.5 rounded-xl bg-parchment-50 dark:bg-obsidian-300 border border-parchment-300 dark:border-obsidian-100 text-parchment-900 dark:text-parchment-100 text-xs sm:text-sm focus:outline-none focus:border-terracotta-500 font-sans transition-colors"
+                autoComplete="username"
+                className="w-full pl-10 pr-3.5 py-2.5 rounded-xl bg-parchment-50 dark:bg-obsidian-300 border border-parchment-300 dark:border-obsidian-100 text-parchment-900 dark:text-parchment-100 text-xs sm:text-sm focus:outline-none focus:border-terracotta-500 font-sans transition-colors"
                 required
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-[11px] font-mono uppercase tracking-wider text-parchment-700 dark:text-parchment-300 mb-1">
+            <label className="block text-[11px] font-mono uppercase tracking-wider text-parchment-700 dark:text-parchment-300 mb-1.5">
               Passcode
             </label>
             <div className="relative">
-              <Lock className="w-4 h-4 text-parchment-400 absolute left-3 top-3" />
+              <Lock className="w-4 h-4 text-parchment-400 absolute left-3.5 top-3.5" />
               <input
-                type="password"
-                placeholder="••••••"
+                type={showPassword ? 'text' : 'password'}
+                placeholder="Enter your confidential passcode"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-9 pr-3.5 py-2.5 rounded-xl bg-parchment-50 dark:bg-obsidian-300 border border-parchment-300 dark:border-obsidian-100 text-parchment-900 dark:text-parchment-100 text-xs sm:text-sm focus:outline-none focus:border-terracotta-500 font-sans transition-colors"
+                autoComplete="current-password"
+                className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-parchment-50 dark:bg-obsidian-300 border border-parchment-300 dark:border-obsidian-100 text-parchment-900 dark:text-parchment-100 text-xs sm:text-sm focus:outline-none focus:border-terracotta-500 font-sans transition-colors"
                 required
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-3 text-parchment-400 hover:text-parchment-600 dark:hover:text-parchment-200 transition-colors"
+                title={showPassword ? 'Hide passcode' : 'Show passcode'}
+              >
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
             </div>
           </div>
 
           <button
             type="submit"
-            className="w-full py-3 rounded-xl bg-terracotta-500 hover:bg-terracotta-600 active:bg-terracotta-700 text-white font-medium text-xs sm:text-sm shadow-warm transition-all transform active:scale-98"
+            className="w-full py-3 rounded-xl bg-terracotta-500 hover:bg-terracotta-600 active:bg-terracotta-700 text-white font-medium text-xs sm:text-sm shadow-warm transition-all transform active:scale-98 mt-2"
           >
             Authenticate & Enter
           </button>
         </form>
 
-        {/* 1-Click Fast Switcher */}
-        <div className="mt-5 pt-4 border-t border-parchment-200 dark:border-obsidian-100">
-          <span className="text-[10px] font-mono uppercase tracking-wider text-parchment-500 block mb-2">
-            Quick 1-Click Switcher (Testing & Roster Access):
-          </span>
-          <div className="grid grid-cols-2 gap-1.5 max-h-36 overflow-y-auto pr-1">
-            {DEFAULT_ACCOUNTS.map((acc) => {
-              const isAdmin = acc.role === 'admin';
-              return (
-                <button
-                  type="button"
-                  key={acc.id}
-                  onClick={() => handleQuickLogin(acc)}
-                  className={`p-2 rounded-xl border text-left text-xs transition-all flex items-center gap-2 ${
-                    isAdmin
-                      ? 'bg-terracotta-50/80 dark:bg-terracotta-950/40 border-terracotta-300 dark:border-terracotta-800 text-terracotta-800 dark:text-terracotta-200 font-medium'
-                      : 'bg-parchment-50 dark:bg-obsidian-300 border-parchment-200 dark:border-obsidian-100 text-parchment-700 dark:text-parchment-300 hover:border-parchment-400'
-                  }`}
-                >
-                  <div className="w-5 h-5 rounded-md overflow-hidden bg-parchment-200 dark:bg-obsidian-100 flex-shrink-0 flex items-center justify-center text-[10px]">
-                    {acc.photo ? (
-                      <img src={acc.photo} alt={acc.name} className="w-full h-full object-cover" />
-                    ) : (
-                      <span>{acc.avatar}</span>
-                    )}
-                  </div>
-                  <div className="truncate">
-                    <span className="block truncate leading-tight">{acc.name}</span>
-                    <span className="text-[9px] font-mono opacity-75">{acc.role === 'admin' ? '👑 Admin' : 'Fellow'}</span>
-                  </div>
-                </button>
-              );
-            })}
+        <div className="mt-5 pt-4 border-t border-parchment-200 dark:border-obsidian-100 flex items-center justify-between text-[11px] font-mono text-parchment-500 dark:text-parchment-400">
+          <div className="flex items-center gap-1.5">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+            <span>Collegiate Passcode Protected</span>
           </div>
+          <span className="text-[10px] opacity-75">Syndicate v1.0</span>
         </div>
       </div>
     </div>
