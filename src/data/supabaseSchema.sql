@@ -46,12 +46,33 @@ CREATE TABLE IF NOT EXISTS app_state (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Enable Row Level Security (RLS) with open policies for the collegiate syndicate
+-- Enable Row Level Security (RLS)
 ALTER TABLE members ENABLE ROW LEVEL SECURITY;
 ALTER TABLE parties ENABLE ROW LEVEL SECURITY;
 ALTER TABLE claims ENABLE ROW LEVEL SECURITY;
 ALTER TABLE app_state ENABLE ROW LEVEL SECURITY;
 
+-- Safely Drop existing policies if they already exist
+DROP POLICY IF EXISTS "Public read members" ON members;
+DROP POLICY IF EXISTS "Public insert members" ON members;
+DROP POLICY IF EXISTS "Public update members" ON members;
+DROP POLICY IF EXISTS "Public delete members" ON members;
+
+DROP POLICY IF EXISTS "Public read parties" ON parties;
+DROP POLICY IF EXISTS "Public insert parties" ON parties;
+DROP POLICY IF EXISTS "Public update parties" ON parties;
+DROP POLICY IF EXISTS "Public delete parties" ON parties;
+
+DROP POLICY IF EXISTS "Public read claims" ON claims;
+DROP POLICY IF EXISTS "Public insert claims" ON claims;
+DROP POLICY IF EXISTS "Public update claims" ON claims;
+DROP POLICY IF EXISTS "Public delete claims" ON claims;
+
+DROP POLICY IF EXISTS "Public read app_state" ON app_state;
+DROP POLICY IF EXISTS "Public insert app_state" ON app_state;
+DROP POLICY IF EXISTS "Public update app_state" ON app_state;
+
+-- Create Open Access Policies for Syndicate Fellows
 CREATE POLICY "Public read members" ON members FOR SELECT USING (true);
 CREATE POLICY "Public insert members" ON members FOR INSERT WITH CHECK (true);
 CREATE POLICY "Public update members" ON members FOR UPDATE USING (true);
