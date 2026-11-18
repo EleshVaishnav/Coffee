@@ -162,13 +162,15 @@ export default function CloudDatabaseModal({
     setIsLoading(false);
 
     if (test.ok) {
-      saveSupabaseCredentials(url.trim(), key.trim());
+      const finalUrl = test.sanitizedUrl || url.trim();
+      saveSupabaseCredentials(finalUrl, key.trim());
+      setUrl(finalUrl);
       setSuccessMsg('Successfully connected to Supabase Cloud Database! 🚀');
       setTimeout(() => {
         onConnectSuccess();
       }, 1000);
     } else {
-      setErrorMsg(`Connection error: ${test.error || 'Failed to connect. Check URL/Key or run the SQL script first.'}`);
+      setErrorMsg(test.error || 'Failed to connect. Check URL/Key or run the SQL script first.');
     }
   };
 
@@ -330,22 +332,27 @@ export default function CloudDatabaseModal({
             {/* Input Form */}
             <form onSubmit={handleTestAndConnect} className="space-y-3 p-4 rounded-2xl bg-parchment-50 dark:bg-obsidian-300 border border-parchment-200 dark:border-obsidian-100">
               <div>
-                <label className="block text-[11px] font-mono uppercase tracking-wider text-parchment-700 dark:text-parchment-300 mb-1">
-                  Supabase Project URL
+                <label className="block text-[11px] font-mono uppercase tracking-wider text-parchment-700 dark:text-parchment-300 mb-1 flex items-center justify-between">
+                  <span>Supabase Project URL</span>
+                  <span className="text-[10px] text-terracotta-600 dark:text-terracotta-400 font-normal">Settings → Data API</span>
                 </label>
                 <input
-                  type="url"
+                  type="text"
                   placeholder="https://xyzabcdefghijklm.supabase.co"
                   value={url}
                   onChange={(e) => setUrl(e.target.value)}
                   className="w-full px-3 py-2 rounded-xl bg-parchment-100 dark:bg-obsidian-200 border border-parchment-300 dark:border-obsidian-100 text-parchment-900 dark:text-parchment-100 text-xs font-mono focus:outline-none focus:border-terracotta-500 transition-colors"
                   required
                 />
+                <span className="text-[10px] text-parchment-500 dark:text-parchment-400 mt-1 block">
+                  Must be: <code className="text-terracotta-600 dark:text-terracotta-400">https://[id].supabase.co</code> (not the browser dashboard URL)
+                </span>
               </div>
 
               <div>
-                <label className="block text-[11px] font-mono uppercase tracking-wider text-parchment-700 dark:text-parchment-300 mb-1">
-                  Supabase anon Public Key
+                <label className="block text-[11px] font-mono uppercase tracking-wider text-parchment-700 dark:text-parchment-300 mb-1 flex items-center justify-between">
+                  <span>Supabase anon Public Key</span>
+                  <span className="text-[10px] text-terracotta-600 dark:text-terracotta-400 font-normal">anon / public</span>
                 </label>
                 <input
                   type="password"
@@ -355,6 +362,9 @@ export default function CloudDatabaseModal({
                   className="w-full px-3 py-2 rounded-xl bg-parchment-100 dark:bg-obsidian-200 border border-parchment-300 dark:border-obsidian-100 text-parchment-900 dark:text-parchment-100 text-xs font-mono focus:outline-none focus:border-terracotta-500 transition-colors"
                   required
                 />
+                <span className="text-[10px] text-parchment-500 dark:text-parchment-400 mt-1 block">
+                  The long JWT token labeled <strong>anon</strong> / <strong>public</strong> in Supabase API settings
+                </span>
               </div>
 
               <button
